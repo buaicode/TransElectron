@@ -115,7 +115,7 @@ app.on('ready', () => {
 // 每小时检查一次更新
 setInterval(() => {
   autoUpdater.checkForUpdates();
-}, 180);
+}, 180000);
 
 // 添加更新事件监听器以记录日志
 autoUpdater.on('checking-for-update', () => {
