@@ -1,0 +1,24 @@
+<svg width="256" height="256" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="rabbitGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color: #F472B6;" />
+      <stop offset="100%" style="stop-color: #8B5CF6;" />
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="22" fill="url(#rabbitGrad2)" />
+  <g transform="translate(50 50) scale(0.7)">
+    <!-- Rabbit Head Shape -->
+    <path d="M 0,35 C -30,35 -40,-10 0,-35 C 40,-10 30,35 0,35 Z" fill="white" />
+    <!-- Left Ear (Normal) -->
+    <path d="M -15,-25 C -25,-45 -10,-50 -5,-30" fill="white" stroke="#F472B6" stroke-width="4"/>
+    <!-- Right Ear (Wrench/Tool) -->
+    <g transform="translate(15, -38)">
+        <rect x="-5" y="-12" width="10" height="24" rx="5" fill="white" stroke="#8B5CF6" stroke-width="4"/>
+        <path d="M 0 -15 C 8 -15, 8 15, 0 15" fill="none" stroke="#8B5CF6" stroke-width="4"/>
+    </g>
+    <!-- AI Eye -->
+    <circle cx="0" cy="0" r="12" fill="#1F2937"/>
+    <circle cx="0" cy="0" r="6" fill="#EC4899"/>
+    <circle cx="-3" cy="-3" r="2" fill="white" fill-opacity="0.7"/>
+  </g>
+</svg>
