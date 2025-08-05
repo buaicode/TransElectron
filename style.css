@@ -23,7 +23,7 @@ body, html {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px;
+    padding: 8px 0 8px 0;
     background-color: #fff;
     height: 48px; /* Fixed height for toolbar */
     position: relative; /* Add relative positioning to the toolbar */
@@ -39,15 +39,19 @@ body, html {
     align-items: center;
 }
 
-.nav-buttons {
+.trans-position {
     margin-left: 80px; /* Default margin for non-fullscreen */
-    transition: margin-left 0.3s ease-in-out;
+    transition: margin-left 0.1s ease-in-out;
 }
 
-body.fullscreen .nav-buttons {
+body.fullscreen .trans-position {
     margin-left: 10px; /* Margin for fullscreen mode */
 }
 
+.toolbar-group-left {
+    display: flex;
+    align-items: center;
+}
 
 .toolbar-group-center {
     position: absolute; /* Use absolute positioning */
@@ -56,6 +60,11 @@ body.fullscreen .nav-buttons {
     display: flex;
     align-items: center; /* Align items vertically */
     justify-content: center;
+}
+
+.toolbar-group-right { 
+    display: flex;
+    align-items: center;
 }
 
 #copy-url-button {
@@ -67,7 +76,7 @@ body.fullscreen .nav-buttons {
 }
 
 #toolbar button {
-    margin-right: 8px;
+    margin-right: 16px;
     padding: 5px;
     border: none;
     border-radius: 50%;
@@ -104,21 +113,50 @@ body.fullscreen .nav-buttons {
     align-items: center;
     cursor: pointer;
     display: none;
+    margin-right: 24px;
+}
+
+#toolbar #update-button:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+#toolbar #update-button:active {
+    background-color: #0056b3;
+    color: #fff;
 }
 
 #toolbar #update-button img {
     margin-right: 5px;
     width: 16px;
     height: 16px;
-    color: #007bff; /* 设置图标颜色为 #007bff */
+    color: #007bff; /* 默认状态 */
 }
 
-#toolbar.fullscreen .nav-buttons {
+#toolbar #update-button:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+#toolbar #update-button:hover img {
+    filter: brightness(0) invert(1); /* 使图标变为白色 */
+}
+
+#toolbar #update-button:active {
+    background-color: #004085; /* 更深的蓝色 */
+    color: #fff;
+}
+
+#toolbar #update-button:active img {
+    filter: brightness(0) invert(1); /* 使图标变为白色 */
+}
+
+#toolbar.fullscreen .trans-position {
     opacity: 0;
-    transition: opacity 0.3s ease-in-out;
+    transition: opacity 0.1s ease-in-out;
 }
 
-#toolbar.fullscreen:hover .nav-buttons {
+#toolbar.fullscreen:hover .trans-position {
     opacity: 1;
 }
 
@@ -226,27 +264,34 @@ body.fullscreen .nav-buttons {
 /* --- Windows Controls --- */
 #windows-controls {
     display: flex;
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 30px;
+    height: 48px;
     -webkit-app-region: no-drag;
 }
 
-#windows-controls.hidden {
+#windows-controls.hidden, #win-toolbar-group.hidden {
+    display: none;
+}
+
+#mac-toolbar-group.hidden {
     display: none;
 }
 
 #windows-controls button {
-    width: 45px;
-    height: 30px;
+    width: 48px;
+    height: 48px;
     border: none;
     background-color: transparent;
-    color: #000;
-    font-size: 16px;
     padding: 0;
     margin: 0;
     border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#windows-controls button img {
+    width: 20px;
+    height: 20px;
 }
 
 #windows-controls button:hover {
@@ -256,6 +301,10 @@ body.fullscreen .nav-buttons {
 #windows-controls #close-button:hover {
     background-color: #e81123;
     color: #fff;
+}
+
+#windows-controls #close-button:hover img {
+    filter: brightness(0) invert(1);
 }
 
 /* Content area is now managed by BrowserView, so no specific style needed */
@@ -285,4 +334,10 @@ body.fullscreen .nav-buttons {
     to {
         transform: rotate(360deg);
     }
+}
+
+@media (max-width: 1280px) {
+  #url-bar {
+    width: calc(100vw - 760px);
+  }
 }

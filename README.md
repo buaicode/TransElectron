@@ -1,10 +1,10 @@
-# ToolsAI Electron 应用
+# TransElectron
 
-这是一个简单的Electron应用，将ToolsAI网站嵌入到桌面应用中。
+TransElectron - A tool that wraps a website into an Electron-based desktop client（一个将网站包装成基于 Electron 的桌面客户端的工具）.
 
 ## 功能
 
-- 将网站 `https://transall.toolsai.com.cn` 嵌入到Electron应用中
+- 将网站嵌入到 Electron 应用中（通过 config.json 配置 homeUrl）
 - 支持多标签浏览，新标签在当前窗口显示，不会打开新窗口
 - 工具栏包含刷新和首页按钮（图标形式）
 - 智能标签栏：只有一个标签时自动隐藏标签栏
@@ -30,44 +30,76 @@
 
 ## 安装
 
+## 操作指南
+
+其他人拿到这个项目后，可以按照以下步骤操作：
+
+### 1. 下载依赖
+
+克隆仓库后，进入项目目录，运行以下命令安装依赖：
+
 ```bash
-# 安装依赖
 npm install
-# 或
+```
+
+或者使用 Yarn：
+
+```bash
 yarn install
 ```
 
-## 运行
+### 2. 配置个性化信息
+
+- **编辑 config.json**：修改 `appName`、`title`、`homeUrl`等字段来个性化应用名称、标题、主页URL。
+- **添加 logo**：将你的 logo PNG 文件放置在 `build/icons/logo.png` 路径下，用于生成应用图标。如果不存在，发布脚本会提示错误。
+
+### 3. 运行应用
+
+运行以下命令启动开发模式：
 
 ```bash
-# 启动应用
 npm start
-# 或
+```
+
+或者使用 Yarn：
+
+```bash
 yarn start
 ```
 
-## 构建
+### 4. 打包和发布
 
-如需构建为可执行文件，可以添加以下依赖和脚本：
+- **安装构建工具**：如果未安装 electron-builder，运行 `npm install electron-builder --save-dev` 或 `yarn add electron-builder --dev`。
+- **开发环境启动**：编辑 `dev-app-update.yml` 文件设置 `GITHUB_OWNER`、`GITHUB_REPO` 和 `GH_TOKEN`（非必需），然后运行 `yarn dev`。
+- **打包**：根据平台运行 `npm run build:mac` (macOS) 或 `npm run build:win` (Windows)。
+- **发布**：编辑 `.env` 文件设置 `GITHUB_OWNER`、`GITHUB_REPO` 和 `GH_TOKEN`，然后运行 `./publish.sh` 来构建并发布到 GitHub Releases。
 
-```bash
-# 安装electron-builder
-npm install electron-builder --save-dev
-# 或
-yarn add electron-builder --dev
-```
+### 5. 其他注意事项
 
-然后在package.json中添加构建脚本：
-
-```json
-"scripts": {
-  "start": "electron .",
-  "build": "electron-builder",
-  "test": "echo \"Error: no test specified\" && exit 1"
-}
-```
+- 确保 ImageMagick 已安装，用于图标生成（macOS: `brew install imagemagick`）。
+- 更新 `package.json` 中的 `name` 和 `build.productName` 以匹配 config.json 中的 appName。
+- 对于自动更新，确保 GitHub 仓库配置正确。
+- 如果修改了代码，测试后重新打包。
 
 ## 注意事项
 
 - 如果网站需要登录或有其他特殊要求，可能需要在main.js中进行额外配置
 - 如果需要与网站进行更深入的交互，可能需要使用preload脚本和IPC通信
+
+## config.json中的配置留存（该文件不允许存在注释内容，所以放在这了）
+- "appName": "TransElectron",
+- "title": "TransElectron-将网站包装成基于 Electron 的桌面客户端",
+- "homeUrl": "https://transall.toolsai.com.cn"
+
+- "appName": "ToolsAI",
+- "title": "ToolsAI-兔子AI，你的AI工具导航网站",
+- "homeUrl": "https://toolsai.com.cn"
+
+- "appName": "TransAll",
+- "title": "TransAll-你的全能格式转换工具",
+- "homeUrl": "https://transall.toolsai.com.cn"
+
+## .env文件格式示例
+- GITHUB_OWNER=buaicode
+- GITHUB_REPO=ToolsAI-Electron
+- GH_TOKEN=你的Github Token

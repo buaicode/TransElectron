@@ -66,7 +66,6 @@ class TabManager {
         const maximizeButton = document.getElementById('maximize-button');
         const closeButton = document.getElementById('close-button');
         const winToolbarGroup = document.getElementById('win-toolbar-group');
-        const macToolbarGroup = document.getElementById('mac-toolbar-group');
 
         minimizeButton.addEventListener('click', () => window.electronAPI.minimizeWindow());
         maximizeButton.addEventListener('click', () => window.electronAPI.maximizeWindow());
@@ -75,16 +74,21 @@ class TabManager {
         window.electronAPI.onPlatform(platform => {
             const isMac = platform === 'darwin';
             const isWin = platform === 'win32';
-            if (isMac) {
-                macToolbarGroup.classList.remove('hidden');
-                document.body.classList.add('darwin');
-            } else if (isWin) {
+            if (isWin) {
                 windowsControls.classList.remove('hidden');
                 winToolbarGroup.classList.remove('hidden');
                 document.body.classList.add('win32');
             } else {
-                console.warn('Unsupported platform:', platform);
-                document.body.classList.add(platform);
+                windowsControls.classList.add('hidden');
+                winToolbarGroup.classList.add('hidden');
+                if (isMac) {
+                    document.body.classList.add('darwin');
+                } else {
+                    document.body.classList.add(platform);
+                }
+            }
+            if (!isWin) {
+                console.warn('Hiding Windows-specific controls on non-Windows platform');
             }
         });
 

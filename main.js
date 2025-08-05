@@ -1,6 +1,8 @@
-const { app, BrowserWindow, ipcMain, BrowserView, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, BrowserView, shell, dialog, net, session } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
+const os = require('os');
+const config = require('./config.json');
 
 // Enable hot-reloading in development
 if (process.env.NODE_ENV !== 'production') {
@@ -17,26 +19,43 @@ let viewOffset = 80;
 
 function createWindow() {
   const isMac = process.platform === 'darwin';
-
+  const isWin = process.platform === 'win32';
+  let iconPath;
+  if (isMac) {
+    const darwinVersion = parseInt(os.release().split('.')[0], 10);
+    const iconsDir = app.isPackaged ? process.resourcesPath : __dirname;
+    iconPath = darwinVersion >= 20 ? path.join(iconsDir, 'build/icons/icon.icns') : path.join(iconsDir, 'build/icons/icon_legacy.icns');
+  } else if (isWin) {
+    const iconsDir = app.isPackaged ? process.resourcesPath : __dirname;
+    iconPath = path.join(iconsDir, 'build/icons/icon.ico');
+  } else {
+    console.warn('Unsupported platform: ' + process.platform);
+    // Set a default icon or handle accordingly
+    const iconsDir = app.isPackaged ? process.resourcesPath : __dirname;
+    iconPath = path.join(iconsDir, ''); // Using PNG as fallback
+  }
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
+    minWidth: 800,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
     },
     frame: false,
+    icon: iconPath,
     ...(isMac ? { 
       titleBarStyle: 'hidden',
       trafficLightPosition: { x: 15, y: 16 }
-    } : {})
+    } : (isWin ? {} : {}))
   });
 
   mainWindow.loadFile('index.html');
 
   mainWindow.webContents.on('did-finish-load', () => {
     mainWindow.webContents.send('platform', process.platform);
+    mainWindow.webContents.send('config', config);
   });
 
   mainWindow.on('closed', function () {
@@ -108,22 +127,62 @@ ipcMain.on('open-in-browser', (event, url) => {
 });
 
 app.on('ready', () => {
+  app.setName(config.appName);
   app.commandLine.appendSwitch('disable-webrtc');
   createWindow();
-  autoUpdater.checkForUpdates();
+  autoUpdater.autoDownload = false;
+  autoUpdater.forceDevUpdateConfig = true;
+  autoUpdater.checkForUpdates().catch(err => console.error('Initial update check failed:', err));
 
-// 每小时检查一次更新
+// 每3分钟检查一次更新
 setInterval(() => {
-  autoUpdater.checkForUpdates();
+  autoUpdater.checkForUpdates().catch(err => console.error('Periodic update check failed:', err));
 }, 180000);
 
 // 添加更新事件监听器以记录日志
 autoUpdater.on('checking-for-update', () => {
   console.log('Checking for update...');
 });
-autoUpdater.on('update-available', (info) => {
-  console.log('Update available:', info);
+// 添加下载处理
+ipcMain.handle('download-update-file', async (event, downloadUrl) => {
+  const isMac = process.platform === 'darwin';
+  const isWin = process.platform === 'win32';
+  let defaultPath;
+  let extension;
+  if (isMac) {
+    defaultPath = path.join(app.getPath('downloads'), path.basename(downloadUrl));
+    extension = 'dmg';
+  } else if (isWin) {
+    defaultPath = path.join(app.getPath('desktop'), path.basename(downloadUrl));
+    extension = 'exe';
+  } else {
+    defaultPath = path.join(app.getPath('downloads'), path.basename(downloadUrl));
+    extension = 'zip'; // Fallback
+  }
+  const { filePath, canceled } = await dialog.showSaveDialog(mainWindow, {
+    defaultPath,
+    filters: [{ name: 'Installer', extensions: [extension] }]
+  });
+  if (canceled || !filePath) return { success: false };
+
+  return new Promise((resolve) => {
+    const request = net.request(downloadUrl);
+    request.on('response', (response) => {
+      if (response.statusCode === 200) {
+        const file = require('fs').createWriteStream(filePath);
+        response.pipe(file);
+        file.on('finish', () => {
+          file.close(() => resolve({ success: true, filePath }));
+        });
+      } else {
+        resolve({ success: false, error: `Failed to download: ${response.statusCode}` });
+      }
+    });
+    request.end();
+  });
 });
+
+
 autoUpdater.on('update-not-available', (info) => {
   console.log('Update not available:', info);
   mainWindow.webContents.send('update-not-available', info);
@@ -141,7 +200,7 @@ autoUpdater.on('update-downloaded', (info) => {
 
 // 处理手动更新检查
 ipcMain.on('check-for-manual-update', () => {
-  autoUpdater.checkForUpdates();
+  autoUpdater.checkForUpdates().catch(err => console.error('Manual update check failed:', err));
 });
 
 // 处理手动下载更新
@@ -151,29 +210,65 @@ ipcMain.on('manual-download-update', () => {
 
 // 发送更新可用事件到渲染进程
 autoUpdater.on('update-available', (info) => {
-  console.log('Update available:', info);
-  const platform = process.platform;
-  let extensions;
-  if (platform === 'darwin') {
-    extensions = ['.dmg', '.zip'];
-  } else if (platform === 'win32') {
-    extensions = ['.exe', '.msi'];
-  } else {
-    extensions = [];
-  }
-  const hasPlatformUpdate = info.files && info.files.some(file => extensions.some(ext => file.url.endsWith(ext)));
-  if (hasPlatformUpdate) {
-    mainWindow.webContents.send('update-available', info);
-  } else {
-    mainWindow.webContents.send('update-not-available', info);
+  try {
+    console.log('Update available:', info);
+    const platform = process.platform;
+    let extensions;
+    const isMac = process.platform === 'darwin';
+    const isWin = process.platform === 'win32';
+    // Load environment variables from .env file
+    require('dotenv').config();
+    
+    // In the update-available handler:
+    let file;
+    if (isMac) {
+      file = info.files.find(f => f.url.endsWith('.dmg')) || info.files.find(f => f.url.endsWith('.zip'));
+    } else if (isWin) {
+      extensions = ['.exe', '.msi'];
+      file = info.files.find(f => extensions.some(ext => f.url.endsWith(ext)));
+    } else {
+      console.warn('Unsupported platform for update:', process.platform);
+      mainWindow.webContents.send('update-not-available', info);
+      return;
+    }
+    if (file) {
+      const githubRepoUrl = `https://github.com/${process.env.GITHUB_OWNER}/${process.env.GITHUB_REPO}`;
+      const downloadUrl = `${githubRepoUrl}/releases/download/v${info.version}/${file.url}`;
+      mainWindow.webContents.send('update-available', { downloadUrl });
+    } else {
+      mainWindow.webContents.send('update-not-available', info);
+    }
+  } catch (err) {
+    console.error('Error in update-available handler:', err);
   }
 });
+
+session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+  if (details.url.startsWith(`https://github.com/${process.env.GITHUB_OWNER}/${process.env.GITHUB_REPO}/releases/latest`)) {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Access-Control-Allow-Origin': ['*']
+      }
+    });
+  } else {
+    callback({ responseHeaders: details.responseHeaders });
+  }
+});
+
 });
 
 app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+  const isMac = process.platform === 'darwin';
+  const isWin = process.platform === 'win32';
+  if (!isMac) {
+    if (isWin) {
+      app.quit(); // Explicit for Windows
+    } else {
+      console.warn('Unsupported platform for window-all-closed:', process.platform);
+      app.quit(); // Default behavior for other platforms
+    }
+  } // For macOS, do nothing to keep the app running
 });
 
 app.on('activate', function () {
@@ -201,7 +296,7 @@ ipcMain.on('create-tab', (event, { url, tabId }) => {
   const contentBounds = mainWindow.getContentBounds();
   view.setBounds({ x: 0, y: viewOffset, width: contentBounds.width, height: contentBounds.height - viewOffset });
   view.setAutoResize({ width: true, height: true });
-  view.webContents.loadURL(url || 'https://transall.toolsai.com.cn');
+  view.webContents.loadURL(url || config.homeUrl);
 
   // Relay navigation events to the renderer process for URL bar updates
   const updateNavigationState = () => {
@@ -250,6 +345,8 @@ ipcMain.on('switch-tab', (event, activeTabId) => {
   if (view) {
     view.setBackgroundColor('#FFFFFF');
     mainWindow.setTopBrowserView(view);
+    const url = view.webContents.getURL();
+    mainWindow.webContents.send('update-url', { tabId: activeTabId, url });
     const canGoBack = view.webContents.canGoBack();
     const canGoForward = view.webContents.canGoForward();
     mainWindow.webContents.send('update-navigation-state', { tabId: activeTabId, canGoBack, canGoForward });
@@ -282,7 +379,7 @@ ipcMain.on('navigate', (event, { tabId, action }) => {
         view.webContents.reload();
         break;
       case 'home':
-        view.webContents.loadURL('https://transall.toolsai.com.cn');
+        view.webContents.loadURL(config.homeUrl);
         break;
     }
   }

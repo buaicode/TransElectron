@@ -1,6 +1,6 @@
 {
-  "name": "ToolsAI",
-  "version": "1.0.7",
+  "name": "TransElectron",
+  "version": "1.0.0",
   "main": "main.js",
   "scripts": {
     "start": "NODE_ENV=production electron .",
@@ -13,7 +13,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "Electron application for ToolsAI",
+  "description": "ToolsAI-兔子AI，你的AI工具导航网站",
   "devDependencies": {
     "electron": "^28.0.0",
     "electron-builder": "^24.13.3",
@@ -33,9 +33,25 @@
       }
     ],
     "mac": {
+      "extraResources": [
+        {
+          "from": "build/icons/icon.icns",
+          "to": "build/icons/icon.icns"
+        },
+        {
+          "from": "build/icons/icon_legacy.icns",
+          "to": "build/icons/icon_legacy.icns"
+        }
+      ],
       "icon": "build/icons/icon.icns"
     },
     "win": {
+      "extraResources": [
+        {
+          "from": "build/icons/icon.ico",
+          "to": "build/icons/icon.ico"
+        }
+      ],
       "icon": "build/icons/icon.ico"
     }
   }

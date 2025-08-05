@@ -2,31 +2,39 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>ToolsAI-兔子AI，你的AI工具导航网站</title>
+    <title></title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="main-container">
         <div id="toolbar">
-
-            <div class="toolbar-group nav-buttons">
-                <button id="back-button"><img src="back-icon.svg" alt="Back"></button>
-                <button id="forward-button"><img src="forward-icon.svg" alt="Forward"></button>
+            <div class="toolbar-group-left trans-position">
+                <div class="toolbar-group">
+                    <button id="back-button"><img src="assets/icons/back-large.svg" alt="Back"></button>
+                    <button id="forward-button"><img src="assets/icons/forward-large.svg" alt="Forward"></button>
+                </div>
+                <div id="win-toolbar-group" class="toolbar-group hidden">
+                    <button id="home-button-win"><img src="assets/icons/home-icon.svg" alt="Home"></button>
+                    <button id="refresh-button-win"><img src="assets/icons/refresh-icon.svg" alt="Refresh"></button>
+                </div>
             </div>
+            
             <div class="toolbar-group-center">
                 <input type="text" id="url-bar" placeholder="https://www.google.com">
-                <button id="copy-url-button" title="复制当前地址"><img src="copy-icon.svg" alt="Copy URL"></button>
-                <button id="open-in-browser-button" title="在浏览器中打开"><img src="open-in-browser-icon.svg" alt="Open in browser"></button>
+                <button id="copy-url-button" title="复制当前地址"><img src="assets/icons/copy-icon.svg" alt="Copy URL"></button>
+                <button id="open-in-browser-button" title="在浏览器中打开"><img src="assets/icons/open-in-browser-icon.svg" alt="Open in browser"></button>
             </div>
-            <div class="toolbar-group">
-                <button id="update-button"><img src="update-icon.svg" alt="Manual Update"> 下载更新</button>
-                <button id="home-button"><img src="home-icon.svg" alt="Home"></button>
-                <button id="refresh-button"><img src="refresh-icon.svg" alt="Refresh"></button>
-            </div>
-            <div id="windows-controls" class="hidden">
-                <button id="minimize-button">—</button>
-                <button id="maximize-button">◻</button>
-                <button id="close-button">✕</button>
+            <div class="toolbar-group-right">
+                <button id="update-button"><img src="assets/icons/update-icon.svg" alt="Manual Update">下载更新</button>
+                <div id="mac-toolbar-group" class="toolbar-group hidden">
+                    <button id="home-button"><img src="assets/icons/home-icon.svg" alt="Home"></button>
+                    <button id="refresh-button"><img src="assets/icons/refresh-icon.svg" alt="Refresh"></button>
+                </div>
+                <div id="windows-controls" class="hidden">
+                    <button id="minimize-button"><img src="assets/icons/minimize.svg" alt="Minimize"></button>
+                    <button id="maximize-button"><img src="assets/icons/maximize.svg" alt="Maximize"></button>
+                    <button id="close-button"><img src="assets/icons/close.svg" alt="Close"></button>
+                </div>
             </div>
         </div>
         <div id="tab-bar">

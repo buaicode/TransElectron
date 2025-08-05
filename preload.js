@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     onUpdateUrl: (callback) => ipcRenderer.on('update-url', (_event, value) => callback(value)),
     updateViewPosition: (offset) => ipcRenderer.send('update-view-position', offset),
     onUpdateFavicon: (callback) => ipcRenderer.on('update-favicon', (_event, value) => callback(value)),
+    onConfig: (callback) => ipcRenderer.on('config', (_event, value) => callback(value)),
 
     onFullscreenChanged: (callback) => ipcRenderer.on('fullscreen-changed', (_event, value) => callback(value)),
 
@@ -26,5 +27,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     manualDownloadUpdate: () => ipcRenderer.send('manual-download-update'),
     onUpdateAvailable: (callback) => ipcRenderer.on('update-available', (_event, info) => callback(info)),
     onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', (_event, path) => callback(path)),
-    onUpdateNotAvailable: (callback) => ipcRenderer.on('update-not-available', (_event, info) => callback(info))
+    onUpdateNotAvailable: (callback) => ipcRenderer.on('update-not-available', (_event, info) => callback(info)),
+    downloadUpdateFile: (downloadUrl) => ipcRenderer.invoke('download-update-file', downloadUrl),
 });
