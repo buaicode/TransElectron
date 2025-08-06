@@ -1,47 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- 设置文档字符编码为UTF-8，确保正确显示各种字符 -->
     <meta charset="UTF-8">
+    <!-- 页面标题，将在浏览器标签栏显示 -->
     <title></title>
+    <!-- 链接外部CSS样式表，用于定义页面的视觉样式 -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- 主容器div，包含整个页面的内容 -->
     <div id="main-container">
+        <!-- 工具栏div，包含导航按钮、URL栏和窗口控制 -->
         <div id="toolbar">
+            <!-- 左侧工具栏组，包含后退、前进按钮 -->
             <div class="toolbar-group-left trans-position">
                 <div class="toolbar-group">
+                    <!-- 后退按钮，点击返回上一页 -->
                     <button id="back-button"><img src="assets/icons/back-large.svg" alt="Back"></button>
+                    <!-- 前进按钮，点击前往下一页 -->
                     <button id="forward-button"><img src="assets/icons/forward-large.svg" alt="Forward"></button>
                 </div>
+                <!-- Windows平台专用的工具栏组，初始隐藏 -->
                 <div id="win-toolbar-group" class="toolbar-group hidden">
+                    <!-- Windows平台的主页按钮 -->
                     <button id="home-button-win"><img src="assets/icons/home-icon.svg" alt="Home"></button>
+                    <!-- Windows平台的刷新按钮 -->
                     <button id="refresh-button-win"><img src="assets/icons/refresh-icon.svg" alt="Refresh"></button>
                 </div>
             </div>
             
+            <!-- 中央工具栏组，包含URL输入栏和相关按钮 -->
             <div class="toolbar-group-center">
+                <!-- URL输入框，用户输入或显示当前网址 -->
                 <input type="text" id="url-bar" placeholder="https://www.google.com">
+                <!-- 复制URL按钮，点击复制当前网址 -->
                 <button id="copy-url-button" title="复制当前地址"><img src="assets/icons/copy-icon.svg" alt="Copy URL"></button>
+                <!-- 在浏览器中打开按钮，点击在系统浏览器中打开当前网址 -->
                 <button id="open-in-browser-button" title="在浏览器中打开"><img src="assets/icons/open-in-browser-icon.svg" alt="Open in browser"></button>
             </div>
+            <!-- 右侧工具栏组，包含更新按钮和平台特定控件 -->
             <div class="toolbar-group-right">
+                <!-- 更新按钮，点击下载应用更新 -->
                 <button id="update-button"><img src="assets/icons/update-icon.svg" alt="Manual Update">下载更新</button>
+                <!-- macOS平台专用的工具栏组，初始隐藏 -->
                 <div id="mac-toolbar-group" class="toolbar-group hidden">
+                    <!-- macOS平台的主页按钮 -->
                     <button id="home-button"><img src="assets/icons/home-icon.svg" alt="Home"></button>
+                    <!-- macOS平台的刷新按钮 -->
                     <button id="refresh-button"><img src="assets/icons/refresh-icon.svg" alt="Refresh"></button>
                 </div>
+                <!-- Windows窗口控制按钮组，初始隐藏 -->
                 <div id="windows-controls" class="hidden">
+                    <!-- 最小化窗口按钮 -->
                     <button id="minimize-button"><img src="assets/icons/minimize.svg" alt="Minimize"></button>
+                    <!-- 最大化/还原窗口按钮 -->
                     <button id="maximize-button"><img src="assets/icons/maximize.svg" alt="Maximize"></button>
+                    <!-- 关闭窗口按钮 -->
                     <button id="close-button"><img src="assets/icons/close.svg" alt="Close"></button>
                 </div>
             </div>
         </div>
+        <!-- 标签栏div，用于显示和管理多个标签 -->
         <div id="tab-bar">
         </div>
-        <!-- Content is now handled by BrowserView in the main process -->
+        <!-- 内容区域由主进程中的BrowserView处理 -->
     </div>
 
+    <!-- 引入渲染进程JavaScript文件，用于处理页面逻辑 -->
     <script src="renderer.js"></script>
 </body>
 </html>

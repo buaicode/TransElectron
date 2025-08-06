@@ -1,7 +1,9 @@
+/* 全局选择器设置，确保所有元素及其伪元素使用border-box盒模型，便于布局计算 */
 *, *::before, *::after {
     box-sizing: border-box;
 }
 
+/* body和html元素的样式设置：移除边距和内边距，设置全屏高度和宽度，隐藏溢出内容，指定字体族，背景色和文本色 */
 body, html {
     margin: 0;
     padding: 0;
@@ -13,68 +15,80 @@ body, html {
     color: #f1f1f1;
 }
 
+/* 主容器样式：使用flex布局，垂直方向排列，占据整个视口高度 */
 #main-container {
     display: flex;
     flex-direction: column;
     height: 100vh;
 }
 
+/* 工具栏样式：flex布局，内容两端对齐，垂直居中，指定内边距、背景色、固定高度、相对定位，并使整个工具栏可拖拽（针对Electron的无边框窗口） */
 #toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 8px 0 8px 0;
     background-color: #fff;
-    height: 48px; /* Fixed height for toolbar */
-    position: relative; /* Add relative positioning to the toolbar */
-    -webkit-app-region: drag; /* Make the entire toolbar draggable */
+    height: 48px;
+    position: relative;
+    -webkit-app-region: drag;
 }
 
+/* 工具栏中的按钮样式：排除按钮的可拖拽区域，以允许正常点击交互 */
 #toolbar button {
-    -webkit-app-region: no-drag; /* Exclude buttons from the draggable region */
+    -webkit-app-region: no-drag;
 }
 
+/* 工具栏组通用样式：flex布局，垂直居中对齐 */
 .toolbar-group {
     display: flex;
     align-items: center;
 }
 
+/* 过渡位置类：默认左边距为80px，用于非全屏模式，并添加过渡效果 */
 .trans-position {
-    margin-left: 80px; /* Default margin for non-fullscreen */
+    margin-left: 80px;
     transition: margin-left 0.1s ease-in-out;
 }
 
+/* 全屏模式下body的过渡位置：调整左边距为10px */
 body.fullscreen .trans-position {
-    margin-left: 10px; /* Margin for fullscreen mode */
+    margin-left: 10px;
 }
 
+/* 左侧工具栏组样式：flex布局，垂直居中 */
 .toolbar-group-left {
     display: flex;
     align-items: center;
 }
 
+/* 中央工具栏组样式：绝对定位，水平居中，flex布局，垂直居中并居中对齐内容 */
 .toolbar-group-center {
-    position: absolute; /* Use absolute positioning */
+    position: absolute;
     left: 50%;
-    transform: translateX(-50%); /* Center the element */
+    transform: translateX(-50%);
     display: flex;
-    align-items: center; /* Align items vertically */
+    align-items: center;
     justify-content: center;
 }
 
+/* 右侧工具栏组样式：flex布局，垂直居中 */
 .toolbar-group-right { 
     display: flex;
     align-items: center;
 }
 
+/* 复制URL按钮样式：左边距12px */
 #copy-url-button {
   margin-left: 12px;
 }
 
+/* 在浏览器中打开按钮样式：左边距0 */
 #open-in-browser-button {
   margin-left: 0;
 }
 
+/* 工具栏按钮通用样式：右边距、内边距、无边框、圆形、背景色、指针光标、flex布局居中、固定宽高 */
 #toolbar button {
     margin-right: 16px;
     padding: 5px;
@@ -89,16 +103,19 @@ body.fullscreen .trans-position {
     height: 32px;
 }
 
+/* 工具栏按钮悬停样式：改变背景色 */
 #toolbar button:hover {
     background-color: #f0f1f2;
 }
 
+/* 工具栏禁用按钮样式：半透明、不允许光标、背景色 */
 #toolbar button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     background-color: #fff;
 }
 
+/* 更新按钮样式：圆角边框、蓝色边框、背景色、内边距、最小宽度、自动高度、字体大小、颜色、不换行、flex布局、指针、不显示、右边距 */
 #toolbar #update-button {
     border-radius: 4px;
     border: 1px solid #007bff;
@@ -116,61 +133,73 @@ body.fullscreen .trans-position {
     margin-right: 24px;
 }
 
+/* 更新按钮悬停样式：背景色和文本色变化 */
 #toolbar #update-button:hover {
     background-color: #007bff;
     color: #fff;
 }
 
+/* 更新按钮激活样式：更深的背景色和文本色 */
 #toolbar #update-button:active {
     background-color: #0056b3;
     color: #fff;
 }
 
+/* 更新按钮中的图像样式：右边距、宽高、默认颜色 */
 #toolbar #update-button img {
     margin-right: 5px;
     width: 16px;
     height: 16px;
-    color: #007bff; /* 默认状态 */
+    color: #007bff;
 }
 
+/* 更新按钮悬停样式（重复）：背景色和文本色 */
 #toolbar #update-button:hover {
     background-color: #007bff;
     color: #fff;
 }
 
+/* 更新按钮悬停时图像样式：过滤器使图标变白 */
 #toolbar #update-button:hover img {
-    filter: brightness(0) invert(1); /* 使图标变为白色 */
+    filter: brightness(0) invert(1);
 }
 
+/* 更新按钮激活样式（重复）：更深的背景色和文本色 */
 #toolbar #update-button:active {
-    background-color: #004085; /* 更深的蓝色 */
+    background-color: #004085;
     color: #fff;
 }
 
+/* 更新按钮激活时图像样式：过滤器使图标变白 */
 #toolbar #update-button:active img {
-    filter: brightness(0) invert(1); /* 使图标变为白色 */
+    filter: brightness(0) invert(1);
 }
 
+/* 全屏模式下工具栏的过渡位置：初始透明，添加过渡效果 */
 #toolbar.fullscreen .trans-position {
     opacity: 0;
     transition: opacity 0.1s ease-in-out;
 }
 
+/* 全屏模式下工具栏悬停时过渡位置：恢复不透明 */
 #toolbar.fullscreen:hover .trans-position {
     opacity: 1;
 }
 
+/* 工具栏按钮图像样式：固定宽高 */
 #toolbar button img {
     width: 20px;
     height: 20px;
 }
 
+/* 主页和刷新按钮图像样式：较小的宽高 */
 #home-button img,
 #refresh-button img {
     width: 12px;
     height: 12px;
 }
 
+/* URL栏样式：固定宽度、内边距、字体大小、边框、圆角、背景色、文本色、居中文本 */
 #url-bar {
     width: 520px;
     padding: 5px 10px;
@@ -182,27 +211,30 @@ body.fullscreen .trans-position {
     text-align: center;
 }
 
+/* URL栏焦点样式：移除轮廓、改变边框色、添加阴影 */
 #url-bar:focus {
     outline: none;
     border-color: #1a73e8;
     box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
 }
 
+/* 标签栏样式：flex布局、背景色、下边框、隐藏水平溢出、不换行、固定高度 */
 #tab-bar {
     display: flex;
     background-color: #fff;
     border-bottom: 1px solid #e6e6e6;
     overflow-x: hidden;
     white-space: nowrap;
-    height: 32px; /* Fixed height for tab-bar */
+    height: 32px;
 }
 
+/* 标签样式：flex布局、居中对齐、内边距、背景色、指针、相对定位、文本色、flex-grow、无边框、无圆角、隐藏溢出 */
 .tab {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 8px 30px 8px 15px; /* Right padding for close button */
-    background-color: #f0f1f2; /* Light grey for non-active tabs */
+    padding: 8px 30px 8px 15px;
+    background-color: #f0f1f2;
     cursor: pointer;
     position: relative;
     color: #000;
@@ -212,16 +244,19 @@ body.fullscreen .trans-position {
     overflow: hidden;
 }
 
+/* 活跃标签样式：白色背景 */
 .tab.active {
-    background-color: #fff; /* Active tab is white */
+    background-color: #fff;
 }
 
+/* 标签内容样式：flex布局、垂直居中、隐藏溢出 */
 .tab-content {
     display: flex;
     align-items: center;
     overflow: hidden;
 }
 
+/* 标签图标样式：固定宽高、右边距、不收缩 */
 .tab-favicon {
     width: 16px;
     height: 16px;
@@ -229,6 +264,7 @@ body.fullscreen .trans-position {
     flex-shrink: 0;
 }
 
+/* 标签标题样式：不换行、隐藏溢出、省略号、字体大小 */
 .tab-title {
     white-space: nowrap;
     overflow: hidden;
@@ -236,6 +272,7 @@ body.fullscreen .trans-position {
     font-size: 12px;
 }
 
+/* 关闭标签按钮样式：无背景、无边框、字体大小、指针、颜色、绝对定位、右上角、转换、内边距、圆角、默认隐藏、行高 */
 .close-tab {
     background: none;
     border: none;
@@ -248,34 +285,40 @@ body.fullscreen .trans-position {
     transform: translateY(-50%);
     padding: 4px;
     border-radius: 4px;
-    display: none; /* Hide by default */
+    display: none;
     line-height: 1;
 }
 
+/* 标签悬停或活跃时显示关闭按钮 */
 .tab:hover .close-tab,
 .tab.active .close-tab {
     display: block;
 }
 
+/* 关闭按钮悬停样式：背景色 */
 .close-tab:hover {
     background-color: #dcdfe1;
 }
 
-/* --- Windows Controls --- */
+/* Windows控件部分 */
+/* Windows控件样式：flex布局、高度、不拖拽 */
 #windows-controls {
     display: flex;
     height: 48px;
     -webkit-app-region: no-drag;
 }
 
+/* 隐藏Windows控件和工具栏组的样式 */
 #windows-controls.hidden, #win-toolbar-group.hidden {
     display: none;
 }
 
+/* 隐藏macOS工具栏组的样式 */
 #mac-toolbar-group.hidden {
     display: none;
 }
 
+/* Windows控件按钮样式：宽高、无边框、透明背景、无内边距、无外边距、无圆角、flex布局居中 */
 #windows-controls button {
     width: 48px;
     height: 48px;
@@ -289,30 +332,36 @@ body.fullscreen .trans-position {
     justify-content: center;
 }
 
+/* Windows控件按钮图像样式：固定宽高 */
 #windows-controls button img {
     width: 20px;
     height: 20px;
 }
 
+/* Windows控件按钮悬停样式：改变背景色 */
 #windows-controls button:hover {
     background-color: #e6e6e6;
 }
 
+/* 关闭按钮悬停样式：红色背景、白色文本 */
 #windows-controls #close-button:hover {
     background-color: #e81123;
     color: #fff;
 }
 
+/* 关闭按钮悬停时图像样式：过滤器使图标变白 */
 #windows-controls #close-button:hover img {
     filter: brightness(0) invert(1);
 }
 
 /* Content area is now managed by BrowserView, so no specific style needed */
 
+/* 加载图标样式：应用旋转动画 */
 .loading-icon {
     animation: spin 1s linear infinite;
 }
 
+/* 图标占位符样式：固定宽高、灰色背景、圆形、flex布局居中、字体设置、右边距 */
 .favicon-placeholder {
     width: 16px;
     height: 16px;
@@ -327,6 +376,7 @@ body.fullscreen .trans-position {
     margin-right: 5px;
 }
 
+/* 旋转动画关键帧：从0度到360度旋转 */
 @keyframes spin {
     from {
         transform: rotate(0deg);
@@ -336,6 +386,7 @@ body.fullscreen .trans-position {
     }
 }
 
+/* 媒体查询：屏幕宽度小于1280px时调整URL栏宽度 */
 @media (max-width: 1280px) {
   #url-bar {
     width: calc(100vw - 760px);
