@@ -115,6 +115,10 @@ class TabManager {
                 windowsControls.classList.remove('hidden');
                 winToolbarGroup.classList.remove('hidden');
                 document.body.classList.add('win32');
+                // Windows 平台统一左侧间距为 10px（无论是否全屏）
+                document.querySelectorAll('.trans-position').forEach(el => {
+                    el.style.marginLeft = '10px';
+                });
             } else {
                 console.warn('Unsupported platform:', platform);
                 document.body.classList.add(platform);
