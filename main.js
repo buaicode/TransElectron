@@ -81,8 +81,8 @@ function createWindow() {
   }
   // 创建BrowserWindow实例
   mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: 1080,
+    height: 668,
     minWidth: 800,
     webPreferences: {
       // 预加载脚本路径
