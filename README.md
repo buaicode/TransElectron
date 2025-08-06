@@ -30,6 +30,9 @@ TransElectron - A tool that wraps a website into an Electron-based desktop clien
 
 ## 安装
 
+- 请确保本地已安装 Node.js 16 或更高版本（推荐使用最新 LTS 版本）。可使用 `node -v` 检查当前版本。
+
+
 ## 操作指南
 
 其他人拿到这个项目后，可以按照以下步骤操作：
