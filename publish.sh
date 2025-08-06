@@ -115,30 +115,9 @@ jq --arg name "$APP_NAME" --arg desc "$TITLE" --arg product "$APP_NAME" --arg ap
     '.name = $name | .description = $desc | .build.productName = $product | .build.appId = $appid | .build.publish[0].owner = $owner | .build.publish[0].repo = $repo' \
     package.json > temp.json && mv temp.json package.json
 
-# 根据当前操作系统运行构建和发布命令
-# 检测平台类型
-PLATFORM=$(uname -s)
-isMac=false
-if [ "$PLATFORM" = "Darwin" ]; then
-  isMac=true
-fi
-isWin=false
-if [[ "$PLATFORM" == MINGW* || "$PLATFORM" == MSYS* || "$PLATFORM" == CYGWIN* ]]; then
-  isWin=true
-fi
-# 如果是 macOS，更新版本并构建/发布 macOS 版本
-if $isMac; then
-  npm version patch --no-git-tag-version
-  npm run build:mac -- --publish always
-# 如果是 Windows，更新版本并构建/发布 Windows 版本
-elif $isWin; then
-  npm version patch --no-git-tag-version
-  npm run build:win -- --publish always
-# 否则，输出不支持的平台并退出
-else
-  echo "Unsupported platform: $PLATFORM"
-  exit 1
-fi
+# macOS 下更新版本并构建/发布
+npm version patch --no-git-tag-version
+npm run build:mac -- --publish always
 
 # 从 package.json 获取当前版本号
 VERSION=$(node -p "require('./package.json').version")
