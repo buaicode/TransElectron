@@ -21,7 +21,77 @@ if (-not (Test-Path "logo.png")) {
     exit 1
 }
 
-# Windows 下不需要生成 .icns 文件，仅生成 .ico 文件
+# 生成新版 macOS (Big Sur 及以上) 图标
+# 如果 icon.icns 不存在，则生成它
+if (-not (Test-Path "icon.icns")) {
+    # 获取原图宽度和高度
+    $dimensions = magick identify -format "%w %h" logo.png
+    $dimensions = $dimensions -split " "
+    $WIDTH = [int]$dimensions[0]
+    $HEIGHT = [int]$dimensions[1]
+    # 计算圆角半径为宽度的18%，取整数
+    $RADIUS = [int]($WIDTH * 0.18)
+    # 使用 ImageMagick 创建硬圆角蒙版并应用，确保切掉部分完全透明
+    magick logo.png -alpha Set `( -size "${WIDTH}x${HEIGHT}" xc:none -fill white -draw "roundrectangle 0,0 $WIDTH,$HEIGHT $RADIUS,$RADIUS" `) -compose CopyOpacity -composite rounded_logo.png
+    # 添加透明边距：缩小到824x824并居中扩展到1024x1024
+    # 这符合 macOS 图标规范中的边距要求
+    magick rounded_logo.png -resize 824x824`> -background none -gravity center -extent 1024x1024 padded_logo.png
+    # 创建 iconset 目录
+    New-Item -Path "icon.iconset" -ItemType Directory -Force
+    # 生成各种分辨率的 PNG 文件，用于 icns 格式
+    # ! 表示忽略宽高比强制调整大小
+    magick padded_logo.png -resize 16x16! icon.iconset/icon_16x16.png
+    magick padded_logo.png -resize 32x32! icon.iconset/icon_16x16@2x.png
+    magick padded_logo.png -resize 32x32! icon.iconset/icon_32x32.png
+    magick padded_logo.png -resize 64x64! icon.iconset/icon_32x32@2x.png
+    magick padded_logo.png -resize 128x128! icon.iconset/icon_128x128.png
+    magick padded_logo.png -resize 256x256! icon.iconset/icon_128x128@2x.png
+    magick padded_logo.png -resize 256x256! icon.iconset/icon_256x256.png
+    magick padded_logo.png -resize 512x512! icon.iconset/icon_256x256@2x.png
+    magick padded_logo.png -resize 512x512! icon.iconset/icon_512x512.png
+    magick padded_logo.png -resize 1024x1024! icon.iconset/icon_512x512@2x.png
+    # 转换为 icns 文件 - Windows下尝试调用iconutil，但会忽略错误
+    try {
+        iconutil -c icns icon.iconset -o icon.icns
+    } catch {
+        Write-Warning "iconutil not available on Windows. ICNS file will not be created."
+        # 注意：Windows环境通常无法执行iconutil，但保留逻辑以保持与Mac脚本一致
+    }
+}
+
+# 生成旧版 macOS 图标
+# 如果 icon_legacy.icns 不存在，则生成它
+if (-not (Test-Path "icon_legacy.icns")) {
+    # 获取原图宽度和高度
+    $dimensions = magick identify -format "%w %h" logo.png
+    $dimensions = $dimensions -split " "
+    $WIDTH = [int]$dimensions[0]
+    $HEIGHT = [int]$dimensions[1]
+    # 计算圆角半径为宽度的18%，取整数
+    $RADIUS = [int]($WIDTH * 0.18)
+    # 使用 ImageMagick 创建硬圆角蒙版并应用，确保切掉部分完全透明
+    magick logo.png -alpha Set `( -size "${WIDTH}x${HEIGHT}" xc:none -fill white -draw "roundrectangle 0,0 $WIDTH,$HEIGHT $RADIUS,$RADIUS" `) -compose CopyOpacity -composite legacy_rounded.png
+    # 创建 legacy.iconset 目录
+    New-Item -Path "legacy.iconset" -ItemType Directory -Force
+    # 生成各种分辨率的 PNG 文件
+    magick legacy_rounded.png -resize 16x16! legacy.iconset/icon_16x16.png
+    magick legacy_rounded.png -resize 32x32! legacy.iconset/icon_16x16@2x.png
+    magick legacy_rounded.png -resize 32x32! legacy.iconset/icon_32x32.png
+    magick legacy_rounded.png -resize 64x64! legacy.iconset/icon_32x32@2x.png
+    magick legacy_rounded.png -resize 128x128! legacy.iconset/icon_128x128.png
+    magick legacy_rounded.png -resize 256x256! legacy.iconset/icon_128x128@2x.png
+    magick legacy_rounded.png -resize 256x256! legacy.iconset/icon_256x256.png
+    magick legacy_rounded.png -resize 512x512! legacy.iconset/icon_256x256@2x.png
+    magick legacy_rounded.png -resize 512x512! legacy.iconset/icon_512x512.png
+    magick legacy_rounded.png -resize 1024x1024! legacy.iconset/icon_512x512@2x.png
+    # 转换为 icns 文件 - Windows下尝试调用iconutil，但会忽略错误
+    try {
+        iconutil -c icns legacy.iconset -o icon_legacy.icns
+    } catch {
+        Write-Warning "iconutil not available on Windows. Legacy ICNS file will not be created."
+        # 注意：Windows环境通常无法执行iconutil，但保留逻辑以保持与Mac脚本一致
+    }
+}
 
 # 生成 Windows 图标
 if (-not (Test-Path "icon.ico")) {
@@ -78,8 +148,7 @@ jq --arg name "$APP_NAME" --arg desc "$TITLE" --arg product "$APP_NAME" --arg ap
 
 Move-Item -Path temp.json -Destination package.json -Force
 
-# 更新版本并构建/发布 Windows 版本
-npm version patch --no-git-tag-version
+# 构建/发布 Windows 版本（Windows 不自动递增版本号）
 npm run build:win -- --publish always
 
 # 从 package.json 获取当前版本号
