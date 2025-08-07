@@ -12,6 +12,10 @@ foreach ($line in $envContent) {
     }
 }
 
+# 设置国内镜像以加速 Electron 及 electron-builder 依赖下载（若用户未自定义）
+if (-not $Env:ELECTRON_MIRROR) { $Env:ELECTRON_MIRROR = "https://npmmirror.com/mirrors/electron/" }
+if (-not $Env:ELECTRON_BUILDER_DOWNLOAD_MIRROR) { $Env:ELECTRON_BUILDER_DOWNLOAD_MIRROR = "https://npmmirror.com/mirrors/electron-builder-binaries/" }
+
 # 切换到图标生成目录并检查/生成应用图标
 Push-Location -Path "build/icons"
 

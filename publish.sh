@@ -6,6 +6,11 @@ set -a
 source .env
 set +a
 
+# 设置国内镜像以加速 Electron 及 electron-builder 依赖下载（若用户未自定义）
+: ${ELECTRON_MIRROR:="https://npmmirror.com/mirrors/electron/"}
+: ${ELECTRON_BUILDER_DOWNLOAD_MIRROR:="https://npmmirror.com/mirrors/electron-builder-binaries/"}
+export ELECTRON_MIRROR ELECTRON_BUILDER_DOWNLOAD_MIRROR
+
 # 切换到图标生成目录并检查/生成应用图标
 # 此部分确保所有平台所需的图标文件存在
 cd build/icons
