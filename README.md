@@ -83,9 +83,10 @@ yarn start
 
   以上两种方式均会读取 `.env` 中的变量并自动更新 `package.json` 的发布配置，随后构建并上传安装包到 GitHub Releases。
 
-### 5. 其他注意事项
-
-- 确保 ImageMagick 已安装，用于图标生成（macOS: `brew install imagemagick`）。
+> **注意**：
+- 确保 `.env` 中的 `GH_TOKEN` 已正确设置，否则无法正常使用git推送功能，也无法正常使用发布功能。
+- 确保 ImageMagick 已安装，用于图标生成（macOS: `brew install imagemagick`；Windows: 可访问官网下载安装包或使用 `choco install imagemagick`）。
+- 确保 jq 已安装，用于 JSON 处理（macOS: `brew install jq`；Windows: `choco install jq` 或从 <https://stedolan.github.io/jq/download/> 获取）。
 - 更新 `package.json` 中的 `name` 和 `build.productName` 以匹配 config.json 中的 appName。
 - 对于自动更新，确保 GitHub 仓库配置正确。
 - 如果修改了代码，测试后重新打包。
