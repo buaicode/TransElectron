@@ -128,7 +128,7 @@ yarn start
   ```bash
   git pull https://$GITHUB_OWNER:$GH_TOKEN@github.com/$GITHUB_OWNER/$GITHUB_REPO.git main
   ```
-  如果已经使用带 Token 的远程别名 `origin`，直接执行 `git pull origin main` 即可。
+- 如果已经使用带 Token 的远程别名 `origin`，直接执行 `git pull origin main` 即可。
 - 网络故障时先测试连通性 `git ls-remote origin`，或切换网络 / 使用代理后重试 `git push`。
 - **谨慎使用强制推送**：`git push --force` 仅在确需覆盖远程历史（如误提交敏感信息）时使用，并应提前告知协作者。
 - 常用查看差异命令：`git log --oneline --graph --decorate --all`、`git diff --stat HEAD..origin/main`，帮助快速定位分支差异。
