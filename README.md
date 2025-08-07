@@ -75,9 +75,9 @@ yarn start
 - **安装构建工具**：如果未安装 electron-builder，运行 `npm install electron-builder --save-dev` 或 `yarn add electron-builder --dev`。
 - **开发环境启动**：编辑 `dev-app-update.yml` 文件设置 `owner` 和 `repo`，然后运行 `yarn dev`。开发环境中，更新配置从 `dev-app-update.yml` 加载。
 - **打包**：根据平台运行 `npm run build:mac` (macOS) 或 `npm run build:win` (Windows)。生产环境中，更新配置从构建时生成的 `app-update.yml` 加载，该文件基于 `package.json` 的 `build.publish` 配置生成。
-- **分脚本发布**：编辑 `.env` 文件设置 `GITHUB_OWNER`、`GITHUB_REPO` 和 `GH_TOKEN`，在 macOS 运行 `./publish.sh` 或 `bash publish.sh`，Windows 运行 `publish.ps1`，即可构建并发布到 GitHub Releases。构建脚本使用 `.env` 更新 `package.json` 中的发布配置。
 - **一键发布**：编辑 `.env` 文件设置 `GITHUB_OWNER`、`GITHUB_REPO` 和 `GH_TOKEN` 后，只需执行 `npm run publish` 即可。该命令会自动检测当前操作系统并调用对应发布脚本（macOS 调用 `publish.sh`、Windows 调用 `publish.ps1`）。
-- **手动发布（保留原方式）**：  
+- **手动发布**：
+  - 编辑 `.env` 文件设置 `GITHUB_OWNER`、`GITHUB_REPO` 和 `GH_TOKEN`
   - macOS：`./publish.sh` 或 `bash publish.sh`  
   - Windows：`publish.ps1`
 
