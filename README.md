@@ -113,9 +113,9 @@ yarn start
 - 使用功能分支开发，合并到 `main` 前先执行 `git pull --rebase origin main` 保持线性历史，避免无意义的 merge commit。
 - 提交前检查修改：`git status`、`git diff`；按 **Conventional Commits** 编写原子化提交消息，例如 `feat: 支持多语言界面`。
 - 推送前若远程存在更新，先拉取解决冲突后再 `git push`；冲突解决后可使用 `git commit --no-edit` 保留自动生成的 merge/rebase 消息。
-- 推送需要身份验证：必须在 `.env` 保存 `GH_TOKEN`，并将远程地址设置为 `https://<token>@github.com/<owner>/<repo>.git`，例如：
+- 推送需要身份验证：必须在 `.env` 保存 `GH_TOKEN`，并将远程地址设置为 `https://<owner>:<token>@github.com/<owner>/<repo>.git`（用户名可以用仓库 owner，也可以用 `x-access-token`），例如：
   ```bash
-  git remote set-url origin https://$GH_TOKEN@github.com/$GITHUB_OWNER/$GITHUB_REPO.git
+  git remote set-url origin https://$GITHUB_OWNER:$GH_TOKEN@github.com/$GITHUB_OWNER/$GITHUB_REPO.git
   ```
 - 网络故障时先测试连通性 `git ls-remote origin`，或切换网络 / 使用代理后重试 `git push`。
 - **谨慎使用强制推送**：`git push --force` 仅在确需覆盖远程历史（如误提交敏感信息）时使用，并应提前告知协作者。
