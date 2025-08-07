@@ -1,6 +1,6 @@
 {
   "name": "TransElectron",
-  "version": "1.0.1",
+  "version": "1.0.6",
   "main": "main.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production electron .",
@@ -8,7 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx electron-builder",
     "build:mac": "npx electron-builder --mac",
-    "build:win": "npx electron-builder --win"
+    "build:win": "npx electron-builder --win",
+    "publish": "node scripts/publisher.js"
   },
   "keywords": [],
   "author": "",
