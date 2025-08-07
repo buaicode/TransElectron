@@ -114,7 +114,7 @@ yarn start
 - GITHUB_REPO=ToolsAI-Electron
 - GH_TOKEN=你的Github Token
 
-## 拉取、提交与推送要点
+## Git 拉取、提交与推送要点
 
 - 初始化时配置用户名和邮箱：`git config --global user.name "Your Name"`、`git config --global user.email "you@example.com"`。
 - 使用功能分支开发，合并到 `main` 前先执行 `git pull --rebase origin main` 保持线性历史，避免无意义的 merge commit。
