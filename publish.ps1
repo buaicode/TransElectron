@@ -146,8 +146,8 @@ $TITLE = jq -r '.title' config.json
 $APP_ID = "com.$(($APP_NAME).ToLower()).electron.app"
 
 # 使用 jq 更新 package.json 中的字段
-jq --arg name "$APP_NAME" --arg desc "$TITLE" --arg product "$APP_NAME" --arg appid "$APP_ID" --arg owner "$GITHUB_OWNER" --arg repo "$GITHUB_REPO" \
-    '.name = $name | .description = $desc | .build.productName = $product | .build.appId = $appid | .build.publish[0].owner = $owner | .build.publish[0].repo = $repo' \
+jq --arg name "$APP_NAME" --arg desc "$TITLE" --arg product "$APP_NAME" --arg appid "$APP_ID" --arg owner "$GITHUB_OWNER" --arg repo "$GITHUB_REPO" `
+    '.name = $name | .description = $desc | .build.productName = $product | .build.appId = $appid | .build.publish[0].owner = $owner | .build.publish[0].repo = $repo' `
     package.json > temp.json
 
 Move-Item -Path temp.json -Destination package.json -Force
@@ -164,9 +164,9 @@ $RELEASE_ID = $releaseInfo | jq -r --arg version "v$VERSION" '.[] | select(.tag_
 
 # 如果找到 release ID，则将该 release 的 draft 状态设置为 false（发布它）
 if ($RELEASE_ID) {
-    curl -H "Authorization: token $GH_TOKEN" \
-         -H "Accept: application/vnd.github.v3+json" \
-         -X PATCH "https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/releases/$RELEASE_ID" \
+    curl -H "Authorization: token $GH_TOKEN" `
+         -H "Accept: application/vnd.github.v3+json" `
+         -X PATCH "https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/releases/$RELEASE_ID" `
          -d '{"draft": false}'
 }
 
