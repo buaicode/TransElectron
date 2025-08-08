@@ -148,7 +148,7 @@ $APP_ID = "com.$(($APP_NAME).ToLower()).electron.app"
 # 使用 jq 更新 package.json 中的字段
 jq --arg name "$APP_NAME" --arg desc "$TITLE" --arg product "$APP_NAME" --arg appid "$APP_ID" --arg owner "$GITHUB_OWNER" --arg repo "$GITHUB_REPO" `
     '.name = $name | .description = $desc | .build.productName = $product | .build.appId = $appid | .build.publish[0].owner = $owner | .build.publish[0].repo = $repo' `
-    package.json > temp.json
+    package.json | Out-File -Encoding UTF8 temp.json
 
 Move-Item -Path temp.json -Destination package.json -Force
 
