@@ -2,8 +2,8 @@
   "appName": "TransElectron",
   "title": "TransElectron-将网站包装成基于 Electron 的桌面客户端",
   "homeUrl": "https://transall.toolsai.com.cn",
-  "version": "1.0.23",
   "name": "transelectron",
-  "productName": "TransElectron",
-  "description": "TransElectron-将网站包装成基于 Electron 的桌面客户端"
+  "version": "1.0.0",
+  "description": "将网站包装成基于 Electron 的桌面客户端",
+  "productName": "TransElectron"
 }

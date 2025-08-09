@@ -1,6 +1,6 @@
 {
-  "name": "transel-ectron",
-  "version": "1.0.23",
+  "name": "transelectron",
+  "version": "1.0.0",
   "main": "main.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production electron .",
@@ -14,7 +14,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "TransElectron-将网站包装成基于 Electron 的桌面客户端",
+  "description": "将网站包装成基于 Electron 的桌面客户端",
   "devDependencies": {
     "cross-env": "^7.0.3",
     "electron-builder": "^24.13.3",
@@ -30,9 +30,9 @@
     "appId": "com.transelectron.electron.app",
     "publish": [
       {
-        "provider": "${env.GITHUB_PROVIDER}",
-        "owner": "${env.GITHUB_OWNER}",
-        "repo": "${env.GITHUB_REPO}"
+        "provider": "github",
+        "owner": "buaicode",
+        "repo": "TransElectron"
       }
     ],
     "mac": {

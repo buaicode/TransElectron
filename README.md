@@ -28,70 +28,41 @@ TransElectron - 一个将网站包装成基于 Electron 的桌面客户端的工
 - **新建标签按钮**：创建新的标签页
 - **标签关闭按钮**：关闭对应的标签（悬停时显示）
 
-## 安装
-
-- 请确保本地已安装 Node.js 16 或更高版本（推荐使用最新 LTS 版本）。可使用 `node -v` 检查当前版本。
-
-
 ## 操作指南
 
-拿到项目后，可以按照以下步骤操作：
+### 1. 环境搭建
 
-### 1. 下载依赖
+请确保本地已安装 Node.js 20 或更高版本（推荐使用v22.12.0 LTS 版本）。可使用 `node -v` 检查当前版本。
 
-克隆仓库后，进入项目目录，运行以下命令安装依赖：
+### 2. 下载依赖
+
+克隆仓库后，进入项目根目录，运行以下命令安装依赖：
 
 ```bash
 npm install
 ```
 
-或者使用 Yarn：
+### 3. 安装所需工具
 
-```bash
-yarn install
-```
+- **安装构建所需工具**：如果未安装 electron-builder，运行 `npm install electron-builder --save-dev` 或 `yarn add electron-builder --dev`。
+- **安装发布所需工具**：
+  - 安装 ImageMagick，用于图标生成（macOS: `brew install imagemagick`；Windows: 可访问官网下载安装包或使用 `choco install imagemagick`）；
+  - 安装 jq ，用于 JSON 处理（macOS: `brew install jq`；Windows: `choco install jq` 或从 <https://stedolan.github.io/jq/download/> 获取）。
 
-### 2. 配置个性化信息
+### 4. 配置个性化信息
 
-- **编辑 config.json**：修改 `appName`、`title`、`homeUrl`、 `name`、`version`、`description`、`productName` 等字段来个性化应用名称、标题、主页URL、包名、版本号、描述、展示名称。
-- **创建 .env 文件**：在项目根目录创建 `.env` 文件，设置 `GITHUB_OWNER`、`GITHUB_REPO`、`GH_TOKEN` （只构建不发布的话，可以用示例值）。
+- **编辑 config.json**：修改 `appName`、`title`、`homeUrl`、 `name`、`version`、`description`、`productName` 等字段来个性化应用名称、标题、主页URL、包名、版本号、描述、展示名称（跟应用名称相同）。
+- **创建 .env 文件**：在项目根目录创建 `.env` 文件，设置 `GITHUB_PROVIDER`、`GITHUB_OWNER`、`GITHUB_REPO`、`GH_TOKEN` （只构建不发布的话，可以用示例值）。
 - **编辑 package.json**：修改 `name`、`version`、`description`、`productName` 等字段来包名、版本号、描述、展示名称（如果使用 `npm run publish` 来发布，可以不用修改； 如果使用 `npm run build` 来构建，则需要修改）。
 - **添加 logo**：将你的 logo PNG 文件放置在 `build/icons/logo.png` 路径下，用于生成应用图标。如果不存在，发布脚本会提示错误。
 - **编辑 dev-app-update.yml 文件**：修改 `provider`、`owner`、`repo` （开发环境中，更新配置从 `dev-app-update.yml` 加载）。
 
-### 3. 运行应用
 
-运行以下命令启动开发模式：
+### 5. 启动、打包和发布
 
-```bash
-npm start
-```
-
-或者使用 Yarn：
-
-```bash
-yarn start
-```
-
-### 4. 打包和发布
-
-- **安装构建工具**：如果未安装 electron-builder，运行 `npm install electron-builder --save-dev` 或 `yarn add electron-builder --dev`。
-- **开发环境启动**：编辑 `dev-app-update.yml` 文件设置 `owner` 和 `repo`，然后运行 `yarn dev`。开发环境中，更新配置从 `dev-app-update.yml` 加载。
-- **打包**：根据平台运行 `npm run build:mac` (macOS) 或 `npm run build:win` (Windows)。生产环境中，更新配置从构建时生成的 `app-update.yml` 加载，该文件基于 `package.json` 的 `build.publish` 配置生成。
-- **一键发布**：编辑 `.env` 文件设置 `GITHUB_OWNER`、`GITHUB_REPO` 和 `GH_TOKEN` 后，只需执行 `npm run publish` 即可。该命令会自动检测当前操作系统并调用对应发布脚本（macOS 调用 `publish.sh`、Windows 调用 `publish.ps1`）。
-- **手动发布**：
-    - 编辑 `.env` 文件设置 `GITHUB_OWNER`、`GITHUB_REPO` 和 `GH_TOKEN`
-    - macOS：`./publish.sh` 或 `bash publish.sh`
-    - Windows：`publish.ps1`
-
-以上两种方式均会读取 `config.json` 和 `.env` 中的变量并自动更新 `package.json` 的发布配置，随后构建并上传安装包到 GitHub Releases。
-
-> **注意**：
-- 确保 `.env` 中的 `GH_TOKEN` 已正确设置，否则无法正常使用git推送功能，也无法正常使用发布功能。
-- 确保 ImageMagick 已安装，用于图标生成（macOS: `brew install imagemagick`；Windows: 可访问官网下载安装包或使用 `choco install imagemagick`）。
-- 确保 jq 已安装，用于 JSON 处理（macOS: `brew install jq`；Windows: `choco install jq` 或从 <https://stedolan.github.io/jq/download/> 获取）。
-- 对于自动更新，确保 GitHub 仓库配置正确。
-- 如果修改了代码，测试后重新打包。
+- **启动**：运行 `npm run dev`即可。
+- **打包**：运行 `npm run build` 即可。或根据平台运行 `npm run build:mac` (macOS) 或 `npm run build:win` (Windows)。生产环境中，更新配置从构建时生成的 `app-update.yml` 加载，该文件基于 `package.json` 的 `build.publish` 配置自动生成。
+- **发布**：运行 `npm run publish` 即可。该命令会自动检测当前操作系统并调用对应发布脚本（macOS 调用 `publish.sh`、Windows 调用 `publish.ps1`），读取 `config.json` 跟 `.env` 中的变量并自动更新 `package.json` 的发布配置，随后构建并上传安装包到 GitHub Releases（需确保 `.env` 已正确设置，尤其是`.env` 中的 `GH_TOKEN` 已正确设置，否则无法使用发布功能，也无法使用自动更新功能以及git推送功能）。
 
 ## 注意事项
 
@@ -101,17 +72,30 @@ yarn start
 ## config.json中的配置留存（该文件不允许存在注释内容，所以放在这了）
 - "appName": "TransElectron",
 - "title": "TransElectron-将网站包装成基于 Electron 的桌面客户端",
-- "homeUrl": "https://transall.toolsai.com.cn"
+- "homeUrl": "https://transall.toolsai.com.cn",
+- "name": "transelectron",
+- "version": "1.0.0",
+- "description": "将网站包装成基于 Electron 的桌面客户端",
+- "productName": "TransElectron"
 
 - "appName": "ToolsAI",
 - "title": "ToolsAI-兔子AI，你的AI工具导航网站",
-- "homeUrl": "https://toolsai.com.cn"
+- "homeUrl": "https://toolsai.com.cn",
+- "name": "toolsai",
+- "version": "1.0.0",
+- "description": "兔子AI，你的AI工具导航网站",
+- "productName": "ToolsAI"
 
 - "appName": "TransAll",
 - "title": "TransAll-你的全能格式转换工具",
-- "homeUrl": "https://transall.toolsai.com.cn"
+- "homeUrl": "https://transall.toolsai.com.cn",
+- "name": "transall",
+- "version": "1.0.0",
+- "description": "你的全能格式转换工具",
+- "productName": "TransAll"
 
-## .env文件格式示例（用于构建和发布）
+## .env文件格式示例（用于发布、更新及git）
+- GITHUB_PROVIDER=github
 - GITHUB_OWNER=buaicode
 - GITHUB_REPO=ToolsAI-Electron
 - GH_TOKEN=你的Github Token
