@@ -30,7 +30,7 @@
     "appId": "com.transelectron.electron.app",
     "publish": [
       {
-        "provider": "github",
+        "provider": "${env.GITHUB_PROVIDER}",
         "owner": "${env.GITHUB_OWNER}",
         "repo": "${env.GITHUB_REPO}"
       }
