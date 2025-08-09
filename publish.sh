@@ -126,6 +126,9 @@ npm run build:mac -- --publish always
 # 从 package.json 获取当前版本号
 VERSION=$(node -p "require('./package.json').version")
 
+# 如需递增版本号请手动执行
+npm version patch --no-git-tag-version
+
 # 使用 GitHub API 获取对应版本的 release ID
 # 需要 GH_TOKEN 环境变量进行认证
 RELEASE_ID=$(curl -s -H "Authorization: token $GH_TOKEN" https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/releases | jq -r --arg version "v$VERSION" '.[] | select(.tag_name == $version) | .id')

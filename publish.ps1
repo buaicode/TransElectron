@@ -159,15 +159,15 @@ $tempJson = jq --arg name "$APP_NAME" --arg desc "$TITLE" --arg product "$APP_NA
 # 使用 UTF8Encoding($false) 写入文件，避免 BOM 导致 electron-builder 解析失败
 [System.IO.File]::WriteAllText("package.json", $tempJson, (New-Object System.Text.UTF8Encoding $false))
 
-# 如需递增版本号请手动执行
-# npm version patch --no-git-tag-version
-
 # 构建/发布 Windows 版本
 # 忽略“发布超过 2 小时”限制
 cross-env EP_GH_IGNORE_TIME=true GH_TOKEN=$GH_TOKEN npx electron-builder --win --publish always
 
 # 从 package.json 获取当前版本号
 $VERSION = node -p "require('./package.json').version"
+
+# 如需递增版本号请手动执行
+npm version patch --no-git-tag-version
 
 # 使用 GitHub API 获取对应版本的 release ID
 $RELEASE_ID = & curl.exe -s -H "Authorization: token $GH_TOKEN" "https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/releases" | jq -r --arg version "v$VERSION" 'try (.[] | select(.tag_name == $version) | .id) catch empty'
