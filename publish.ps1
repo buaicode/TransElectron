@@ -144,21 +144,26 @@ $OutputEncoding = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 # 从 config.json 提取应用名称和标题，使用 PowerShell 原生命令确保 UTF-8 读取不乱码
 $configText = Get-Content -Path "config.json" -Raw -Encoding utf8
 $configObj  = $configText | ConvertFrom-Json
-$APP_NAME   = $configObj.appName
-$TITLE      = $configObj.title
+-$APP_NAME   = $configObj.appName
+-$TITLE      = $configObj.title
+-$VERSION   = $configObj.version
++$NAME       = $configObj.name
++$PRODUCT    = $configObj.productName
++$DESCRIPTION= $configObj.description
 +$VERSION    = $configObj.version
 
 # 生成应用 ID
-$APP_ID = "com.$(($APP_NAME).ToLower()).electron.app"
+-$APP_ID = "com.$(($APP_NAME).ToLower()).electron.app"
++$APP_ID = "com.$(($NAME).ToLower()).electron.app"
 
 # 使用 jq 更新 package.json 中的字段
 # 生成新的 package.json 内容并写入 UTF-8 (无 BOM)
--$tempJson = jq --arg name "$APP_NAME" --arg desc "$TITLE" --arg product "$APP_NAME" --arg appid "$APP_ID" --arg owner "$GITHUB_OWNER" --arg repo "$GITHUB_REPO" `
--    '.name = $name | .description = $desc | .build.productName = $product | .build.appId = $appid | .build.publish[0].owner = $owner | .build.publish[0].repo = $repo | .build.publish[0].releaseType = "release"' `
--    package.json
-+$tempJson = jq --arg name "$APP_NAME" --arg desc "$TITLE" --arg product "$APP_NAME" --arg appid "$APP_ID" --arg owner "$GITHUB_OWNER" --arg repo "$GITHUB_REPO" --arg ver "$VERSION" `
+-$tempJson = jq --arg name "$APP_NAME" --arg desc "$TITLE" --arg product "$APP_NAME" --arg appid "$APP_ID" --arg owner "$GITHUB_OWNER" --arg repo "$GITHUB_REPO" --arg ver "$VERSION" `
+-    '.name = $name | .description = $desc | .version = $ver | .build.productName = $product | .build.appId = $appid | .build.publish[0].owner = $owner | .build.publish[0].repo = $repo | .build.publish[0].releaseType = "release"' `
++# 使用 jq 生成新的 package.json
++$tempJson = jq --arg name "$NAME" --arg desc "$DESCRIPTION" --arg product "$PRODUCT" --arg appid "$APP_ID" --arg owner "$GITHUB_OWNER" --arg repo "$GITHUB_REPO" --arg ver "$VERSION" `
 +    '.name = $name | .description = $desc | .version = $ver | .build.productName = $product | .build.appId = $appid | .build.publish[0].owner = $owner | .build.publish[0].repo = $repo | .build.publish[0].releaseType = "release"' `
-+    package.json
+     package.json
 
 # 使用 UTF8Encoding($false) 写入文件，避免 BOM 导致 electron-builder 解析失败
 [System.IO.File]::WriteAllText("package.json", $tempJson, (New-Object System.Text.UTF8Encoding $false))
