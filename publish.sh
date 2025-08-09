@@ -121,7 +121,6 @@ jq --arg name "$APP_NAME" --arg desc "$TITLE" --arg product "$APP_NAME" --arg ap
     package.json > temp.json && mv temp.json package.json
 
 # macOS 下更新版本并构建/发布
-npm version patch --no-git-tag-version
 npm run build:mac -- --publish always
 
 # 从 package.json 获取当前版本号

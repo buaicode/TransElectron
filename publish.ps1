@@ -159,8 +159,8 @@ $tempJson = jq --arg name "$APP_NAME" --arg desc "$TITLE" --arg product "$APP_NA
 # 使用 UTF8Encoding($false) 写入文件，避免 BOM 导致 electron-builder 解析失败
 [System.IO.File]::WriteAllText("package.json", $tempJson, (New-Object System.Text.UTF8Encoding $false))
 
-# 自动递增补丁版本号，保证每次发布版本号唯一
-npm version patch --no-git-tag-version
+# 如需递增版本号请手动执行
+# npm version patch --no-git-tag-version
 
 # 构建/发布 Windows 版本
 # 忽略“发布超过 2 小时”限制
