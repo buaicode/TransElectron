@@ -154,7 +154,7 @@ $APP_ID      = "com.$(($NAME).ToLower()).electron.app"
 
 # 使用 jq 生成新的 package.json
 $tempJson = jq --arg name "$NAME" --arg ver "$VERSION" --arg desc "$DESCRIPTION" --arg product "$PRODUCTNAME" --arg appid "$APP_ID" --arg provider "$GITHUB_PROVIDER" --arg owner "$GITHUB_OWNER" --arg repo "$GITHUB_REPO" `
-    '.name = $name | .version = $ver | .description = $desc | .build.productName = $product | .build.appId = $appid | .build.publish[0].provider = $provider | .build.publish[0].owner = $owner | .build.publish[0].repo = $repo | .build.publish[0].releaseType = "release"' `
+    '.name = $name | .version = $ver | .description = $desc | .build.productName = $product | .build.appId = $appid | .build.publish[0].provider = $provider | .build.publish[0].owner = $owner | .build.publish[0].repo = $repo | .build.publish[0].releaseType = \"release\"' `
     package.json
 
 # 使用 UTF8Encoding($false) 写入文件，避免 BOM 导致 electron-builder 解析失败
