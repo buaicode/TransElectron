@@ -1,6 +1,6 @@
 # TransElectron
 
-TransElectron - A tool that wraps a website into an Electron-based desktop client（一个将网站包装成基于 Electron 的桌面客户端的工具）.
+TransElectron - 一个将网站包装成基于 Electron 的桌面客户端的工具（A tool that wraps a website into an Electron-based desktop client）.
 
 ## 功能
 
@@ -35,7 +35,7 @@ TransElectron - A tool that wraps a website into an Electron-based desktop clien
 
 ## 操作指南
 
-其他人拿到这个项目后，可以按照以下步骤操作：
+拿到项目后，可以按照以下步骤操作：
 
 ### 1. 下载依赖
 
@@ -53,8 +53,11 @@ yarn install
 
 ### 2. 配置个性化信息
 
-- **编辑 config.json**：修改 `appName`、`title`、`homeUrl`等字段来个性化应用名称、标题、主页URL。
+- **编辑 config.json**：修改 `appName`、`title`、`homeUrl`、 `name`、`version`、`description`、`productName` 等字段来个性化应用名称、标题、主页URL、包名、版本号、描述、展示名称。
+- **创建 .env 文件**：在项目根目录创建 `.env` 文件，设置 `GITHUB_OWNER`、`GITHUB_REPO`、`GH_TOKEN` （只构建不发布的话，可以用示例值）。
+- **编辑 package.json**：修改 `name`、`version`、`description`、`productName` 等字段来包名、版本号、描述、展示名称（如果使用 `npm run publish` 来发布，可以不用修改； 如果使用 `npm run build` 来构建，则需要修改）。
 - **添加 logo**：将你的 logo PNG 文件放置在 `build/icons/logo.png` 路径下，用于生成应用图标。如果不存在，发布脚本会提示错误。
+- **编辑 dev-app-update.yml 文件**：修改 `provider`、`owner`、`repo` （开发环境中，更新配置从 `dev-app-update.yml` 加载）。
 
 ### 3. 运行应用
 
@@ -77,17 +80,16 @@ yarn start
 - **打包**：根据平台运行 `npm run build:mac` (macOS) 或 `npm run build:win` (Windows)。生产环境中，更新配置从构建时生成的 `app-update.yml` 加载，该文件基于 `package.json` 的 `build.publish` 配置生成。
 - **一键发布**：编辑 `.env` 文件设置 `GITHUB_OWNER`、`GITHUB_REPO` 和 `GH_TOKEN` 后，只需执行 `npm run publish` 即可。该命令会自动检测当前操作系统并调用对应发布脚本（macOS 调用 `publish.sh`、Windows 调用 `publish.ps1`）。
 - **手动发布**：
-  - 编辑 `.env` 文件设置 `GITHUB_OWNER`、`GITHUB_REPO` 和 `GH_TOKEN`
-  - macOS：`./publish.sh` 或 `bash publish.sh`  
-  - Windows：`publish.ps1`
+    - 编辑 `.env` 文件设置 `GITHUB_OWNER`、`GITHUB_REPO` 和 `GH_TOKEN`
+    - macOS：`./publish.sh` 或 `bash publish.sh`
+    - Windows：`publish.ps1`
 
-  以上两种方式均会读取 `.env` 中的变量并自动更新 `package.json` 的发布配置，随后构建并上传安装包到 GitHub Releases。
+以上两种方式均会读取 `config.json` 和 `.env` 中的变量并自动更新 `package.json` 的发布配置，随后构建并上传安装包到 GitHub Releases。
 
 > **注意**：
 - 确保 `.env` 中的 `GH_TOKEN` 已正确设置，否则无法正常使用git推送功能，也无法正常使用发布功能。
 - 确保 ImageMagick 已安装，用于图标生成（macOS: `brew install imagemagick`；Windows: 可访问官网下载安装包或使用 `choco install imagemagick`）。
 - 确保 jq 已安装，用于 JSON 处理（macOS: `brew install jq`；Windows: `choco install jq` 或从 <https://stedolan.github.io/jq/download/> 获取）。
-- 更新 `package.json` 中的 `name` 和 `build.productName` 以匹配 config.json 中的 appName。
 - 对于自动更新，确保 GitHub 仓库配置正确。
 - 如果修改了代码，测试后重新打包。
 
@@ -132,16 +134,3 @@ yarn start
 - 网络故障时先测试连通性 `git ls-remote origin`，或切换网络 / 使用代理后重试 `git push`。
 - **谨慎使用强制推送**：`git push --force` 仅在确需覆盖远程历史（如误提交敏感信息）时使用，并应提前告知协作者。
 - 常用查看差异命令：`git log --oneline --graph --decorate --all`、`git diff --stat HEAD..origin/main`，帮助快速定位分支差异。
-- 更新 `package.json` 中的 `name` 和 `build.productName` 以匹配 `config.json` 中的 `name` 与 `productName`（发布脚本已自动处理）。
-
-## config.json 示例（无注释）
-```json
-{
-  "name": "transelectron",
-  "productName": "TransElectron",
-  "description": "TransElectron-将网站包装成基于 Electron 的桌面客户端",
-  "homeUrl": "https://transall.toolsai.com.cn"
-}
-```
-
-> 根据需要修改 `name`（包名，小写且唯一）、`productName`（展示名）、`description` 与 `homeUrl`。
