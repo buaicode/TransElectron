@@ -109,25 +109,18 @@ cd ../..
 command -v jq >/dev/null 2>&1 || { echo "Error: jq is required but not installed. Please install jq to proceed." >&2; exit 1; }
 
 # 从 config.json 提取应用名称和标题
--APP_NAME=$(jq -r '.appName' config.json)
--TITLE=$(jq -r '.title' config.json)
--VERSION=$(jq -r '.version' config.json)
--# 生成应用 ID
--APP_ID="com.$(echo "$APP_NAME" | tr '[:upper:]' '[:lower:]').electron.app"
-+NAME=$(jq -r '.name' config.json)
-+PRODUCT=$(jq -r '.productName' config.json)
-+DESCRIPTION=$(jq -r '.description' config.json)
-+VERSION=$(jq -r '.version' config.json)
-+# 生成应用 ID
-+APP_ID="com.$(echo "$NAME" | tr '[:upper:]' '[:lower:]').electron.app"
+NAME=$(jq -r '.name' config.json)
+PRODUCT=$(jq -r '.productName' config.json)
+DESCRIPTION=$(jq -r '.description' config.json)
+VERSION=$(jq -r '.version' config.json)
+# 生成应用 ID
+APP_ID="com.$(echo "$NAME" | tr '[:upper:]' '[:lower:]').electron.app"
 
 # 使用 jq 更新 package.json 中的字段
 # 包括名称、描述、产品名、appId 和发布配置
--jq --arg name "$APP_NAME" --arg desc "$TITLE" --arg product "$APP_NAME" --arg appid "$APP_ID" --arg owner "$GITHUB_OWNER" --arg repo "$GITHUB_REPO" --arg ver "$VERSION" \
--    '.name = $name | .description = $desc | .version = $ver | .build.productName = $product | .build.appId = $appid | .build.publish[0].owner = $owner | .build.publish[0].repo = $repo' \
-+jq --arg name "$NAME" --arg desc "$DESCRIPTION" --arg product "$PRODUCT" --arg appid "$APP_ID" --arg owner "$GITHUB_OWNER" --arg repo "$GITHUB_REPO" --arg ver "$VERSION" \
-+    '.name = $name | .description = $desc | .version = $ver | .build.productName = $product | .build.appId = $appid | .build.publish[0].owner = $owner | .build.publish[0].repo = $repo' \
-     package.json > temp.json && mv temp.json package.json
+jq --arg name "$NAME" --arg desc "$DESCRIPTION" --arg product "$PRODUCT" --arg appid "$APP_ID" --arg owner "$GITHUB_OWNER" --arg repo "$GITHUB_REPO" --arg ver "$VERSION" \
+    '.name = $name | .description = $desc | .version = $ver | .build.productName = $product | .build.appId = $appid | .build.publish[0].owner = $owner | .build.publish[0].repo = $repo' \
+    package.json > temp.json && mv temp.json package.json
 
 # macOS 下更新版本并构建/发布
 npm run build:mac -- --publish always
