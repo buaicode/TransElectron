@@ -132,3 +132,16 @@ yarn start
 - 网络故障时先测试连通性 `git ls-remote origin`，或切换网络 / 使用代理后重试 `git push`。
 - **谨慎使用强制推送**：`git push --force` 仅在确需覆盖远程历史（如误提交敏感信息）时使用，并应提前告知协作者。
 - 常用查看差异命令：`git log --oneline --graph --decorate --all`、`git diff --stat HEAD..origin/main`，帮助快速定位分支差异。
+- 更新 `package.json` 中的 `name` 和 `build.productName` 以匹配 `config.json` 中的 `name` 与 `productName`（发布脚本已自动处理）。
+
+## config.json 示例（无注释）
+```json
+{
+  "name": "transelectron",
+  "productName": "TransElectron",
+  "description": "TransElectron-将网站包装成基于 Electron 的桌面客户端",
+  "homeUrl": "https://transall.toolsai.com.cn"
+}
+```
+
+> 根据需要修改 `name`（包名，小写且唯一）、`productName`（展示名）、`description` 与 `homeUrl`。
