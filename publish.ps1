@@ -138,36 +138,55 @@ if (-not (Get-Command jq -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
-# 从 config.json 提取应用名称和标题
-$APP_NAME = jq -r '.appName' config.json
-$TITLE = jq -r '.title' config.json
+# 强制 PowerShell 控制台与管道均使用 UTF-8，防止 jq 输出中文被重新编码
+$OutputEncoding = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
+# 从 config.json 提取应用名称和标题，使用 PowerShell 原生命令确保 UTF-8 读取不乱码
+$configText = Get-Content -Path "config.json" -Raw -Encoding utf8
+$configObj  = $configText | ConvertFrom-Json
+$APP_NAME   = $configObj.appName
+$TITLE      = $configObj.title
 
 # 生成应用 ID
 $APP_ID = "com.$(($APP_NAME).ToLower()).electron.app"
 
 # 使用 jq 更新 package.json 中的字段
-jq --arg name "$APP_NAME" --arg desc "$TITLE" --arg product "$APP_NAME" --arg appid "$APP_ID" --arg owner "$GITHUB_OWNER" --arg repo "$GITHUB_REPO" `
-    '.name = $name | .description = $desc | .build.productName = $product | .build.appId = $appid | .build.publish[0].owner = $owner | .build.publish[0].repo = $repo' `
-    package.json | Out-File -Encoding UTF8 temp.json
+# 生成新的 package.json 内容并写入 UTF-8 (无 BOM)
+$tempJson = jq --arg name "$APP_NAME" --arg desc "$TITLE" --arg product "$APP_NAME" --arg appid "$APP_ID" --arg owner "$GITHUB_OWNER" --arg repo "$GITHUB_REPO" `
+    '.name = $name | .description = $desc | .build.productName = $product | .build.appId = $appid | .build.publish[0].owner = $owner | .build.publish[0].repo = $repo | .build.publish[0].releaseType = \"release\"' `
+    package.json
 
-Move-Item -Path temp.json -Destination package.json -Force
+# 使用 UTF8Encoding($false) 写入文件，避免 BOM 导致 electron-builder 解析失败
+[System.IO.File]::WriteAllText("package.json", $tempJson, (New-Object System.Text.UTF8Encoding $false))
 
-# 构建/发布 Windows 版本（Windows 不自动递增版本号）
-npm run build:win -- --publish always
+# 自动递增补丁版本号，保证每次发布版本号唯一
+npm version patch --no-git-tag-version
+
+# 构建/发布 Windows 版本
+# 忽略“发布超过 2 小时”限制
+cross-env EP_GH_IGNORE_TIME=true GH_TOKEN=$GH_TOKEN npx electron-builder --win --publish always
 
 # 从 package.json 获取当前版本号
 $VERSION = node -p "require('./package.json').version"
 
 # 使用 GitHub API 获取对应版本的 release ID
-$releaseInfo = curl -s -H "Authorization: token $GH_TOKEN" "https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/releases"
-$RELEASE_ID = $releaseInfo | jq -r --arg version "v$VERSION" '.[] | select(.tag_name == $version) | .id'
+$RELEASE_ID = & curl.exe -s -H "Authorization: token $GH_TOKEN" "https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/releases" | jq -r --arg version "v$VERSION" 'try (.[] | select(.tag_name == $version) | .id) catch empty'
 
 # 如果找到 release ID，则将该 release 的 draft 状态设置为 false（发布它）
 if ($RELEASE_ID) {
-    curl -H "Authorization: token $GH_TOKEN" `
-         -H "Accept: application/vnd.github.v3+json" `
-         -X PATCH "https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/releases/$RELEASE_ID" `
-         -d '{"draft": false}'
+    Write-Host "Found release ID $RELEASE_ID for v$VERSION, attempting to publish release..."    
+    $headers = @{ Authorization = "token $GH_TOKEN"; Accept = "application/vnd.github+json" }
+    $body = @{ draft = $false } | ConvertTo-Json
+    try {
+        Invoke-RestMethod -Uri "https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/releases/$RELEASE_ID" -Method Patch -Headers $headers -Body $body -ErrorAction Stop | Out-Null
+        $PATCH_RESPONSE = "204"  # GitHub returns 200 or 204 on success; treat as success
+    } catch {
+        $PATCH_RESPONSE = $_.Exception.Response.StatusCode.value__
+        Write-Warning $_.Exception.Message
+    }
+    Write-Host "GitHub API PATCH response status code: $PATCH_RESPONSE"
+} else {
+    Write-Warning "Release for version v$VERSION not found (draft not created). Build or upload might have failed."
 }
 
 # 注意: 请确保 .env 中有正确的 GH_TOKEN，并在运行前更新版本号如果需要自定义。
