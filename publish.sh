@@ -120,7 +120,7 @@ APP_ID="com.$(echo "$NAME" | tr '[:upper:]' '[:lower:]').electron.app"
 # 使用 jq 更新 package.json 中的字段
 # 包括名称、描述、产品名、appId 和发布配置
 jq --arg name "$NAME" --arg ver "$VERSION" --arg desc "$DESCRIPTION" --arg product "$PRODUCTNAME" --arg appid "$APP_ID" --arg provider "$GITHUB_PROVIDER" --arg owner "$GITHUB_OWNER" --arg repo "$GITHUB_REPO" \
-    '.name = $name | .version = $ver | .description = $desc | .build.productName = $product | .build.appId = $appid | .build.publish[0].provider = $provider | .build.publish[0].owner = $owner | .build.publish[0].repo = $repo' \
+    '.name = $name | .version = $ver | .description = $desc | .build.productName = $product | .build.appId = $appid | .build.publish[0].provider = $provider | .build.publish[0].owner = $owner | .build.publish[0].repo = $repo | .build.publish[0].releaseType = "release"' \
     package.json > temp.json && mv temp.json package.json
 
 # macOS 下更新版本并构建/发布
